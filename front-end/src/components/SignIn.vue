@@ -1,22 +1,17 @@
 <template>
   <div class="">
-    <form action="" method="get" class="form-example">
+    <form @submit.prevent="">
       <div class="flex flex-col pb-4">
-        <label for="usermail">Email </label>
-        <input v-model="userMail" class="" type="text" name="usermail" id="usermail" required />
+        <label for="username">Username</label>
+        <input v-model="username" class="" type="text" name="username" required />
       </div>
       <div class="flex flex-col">
-        <label for="userpasssword">Mot de passe</label>
-        <input
-          v-model="userPassword"
-          type="password"
-          name="userpasssword"
-          id="userpasssword"
-          required
-        />
+        <label for="password">Mot de passe</label>
+        <input v-model="password" type="password" name="password" required />
       </div>
       <div class="pt-8">
         <button
+          @click="handleSubmit"
           type="submit"
           class="bg-teal-600 w-full font-bold text-white p-4 rounded hover:bg-teal-700 duration-200"
         >
@@ -27,8 +22,42 @@
   </div>
 </template>
 <script setup lang="ts">
-const userMail = "";
-const userPassword = "";
+import router from "@/router";
+import { ref, inject } from "vue";
+
+const axios: any = inject("axios");
+
+const username = ref("user");
+const password = ref("tenvklnavst");
+
+const handleSubmit = async () => {
+  const accessTokenURL = "https://pokedexbe-akd7k.dev.simco.io/api/token/";
+
+  const data = {
+    password: password.value,
+    username: username.value,
+  };
+
+  await axios
+    .post(accessTokenURL, data, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "content-type": "application/json",
+      },
+    })
+    .then((response: { data: any }) => {
+      if (response.data.access && response.data.refresh) {
+        // On stock les 2 tokens dans localStorage
+        window.localStorage.setItem("accessToken", response.data.access);
+        window.localStorage.setItem("refreshToken", response.data.refresh);
+        router.push("/");
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
 </script>
 
 <style scoped lang="scss">
