@@ -13,7 +13,7 @@
         <button
           @click="handleSubmit"
           type="submit"
-          class="bg-teal-600 w-full font-bold text-white p-4 rounded hover:bg-teal-700 duration-200"
+          class="bg-cyan-700 w-full font-bold text-white p-4 rounded hover:bg-cyan-900 duration-200"
         >
           Connexion
         </button>
