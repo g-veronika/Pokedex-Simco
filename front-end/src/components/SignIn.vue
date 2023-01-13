@@ -17,6 +17,9 @@
         >
           Connexion
         </button>
+        <div v-if="isInvalid" class="flex justify-center pt-8">
+          <p class="align-center text-xl text-rose-900">Vos identifiants ne sont pas corrects :(</p>
+        </div>
       </div>
     </form>
   </div>
@@ -24,13 +27,19 @@
 <script setup lang="ts">
 import router from "@/router";
 import { ref, inject } from "vue";
+import { useUserStore } from "@/stores/user";
 
 const axios: any = inject("axios");
 
 const username = ref("user");
 const password = ref("tenvklnavst");
+const isInvalid = ref(false);
+
+const user = useUserStore();
 
 const handleSubmit = async () => {
+  isInvalid.value = false;
+
   const accessTokenURL = "https://pokedexbe-akd7k.dev.simco.io/api/token/";
 
   const data = {
@@ -51,11 +60,15 @@ const handleSubmit = async () => {
         // On stock les 2 tokens dans localStorage
         window.localStorage.setItem("accessToken", response.data.access);
         window.localStorage.setItem("refreshToken", response.data.refresh);
+        user.$patch({
+          userName: username.value,
+        });
         router.push("/");
       }
     })
     .catch((error) => {
       console.log(error);
+      isInvalid.value = true;
     });
 };
 </script>
