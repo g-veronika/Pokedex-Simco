@@ -8,24 +8,27 @@
         </div>
         <div class="card-body flex justify-center mt-[30px]">
           <img class="w-[200px]" :src="pokemon.img" :alt="pokemon.name" />
+          <div class="refNumber text-xl">{{ pokemon.ref_number }}</div>
         </div>
       </div>
     </div>
     <div class="flex justify-center gap-16 pb-8">
-      <div
-        class="cursor-pointer text-8xl"
-        :class="previousPage === null ? 'text-stone-600 cursor-not-allowed' : 'text-orange-600'"
+      <button
+        type="button"
+        :disabled="previousPage === null"
+        class="cursor-pointer text-8xl disabled:text-stone-600 disabled:pointer-events-none text-orange-600 hover:text-orange-800 disabled:opacity-60"
         @click="goPreviousPage()"
       >
         &#8592;
-      </div>
-      <div
-        :class="nextPage === null ? 'text-stone-600 cursor-not-allowed' : 'text-orange-600'"
-        class="cursor-pointer text-8xl"
+      </button>
+      <button
+        type="button"
+        :disabled="nextPage === null"
+        class="cursor-pointer text-8xl disabled:text-stone-600 disabled:pointer-events-none text-orange-600 hover:text-orange-800 disabled:opacity-60"
         @click="goNextPage()"
       >
         &rarr;
-      </div>
+      </button>
     </div>
   </div>
 </template>
@@ -54,7 +57,6 @@ const getList = async (url: string): void => {
   pokemons.value.forEach(async (pokemon) => {
     pokemon.img = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.ref_number}.png`;
   });
-  console.log(pokemons.value);
 };
 getList(showPokemonsURL);
 
@@ -83,6 +85,19 @@ const goPreviousPage = () => {
   cursor: pointer;
   will-change: transform;
 
+  .card-header {
+    font-family: "Sigmar One";
+    will-change: transform;
+    transition-duration: 0.8s;
+
+    border: 7px solid #f8a918;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+    background-color: #efcf95;
+    padding: 2rem;
+    height: 100px;
+  }
+
   &:hover {
     width: 280px;
     height: 390px;
@@ -91,21 +106,15 @@ const goPreviousPage = () => {
     box-shadow: 5px 5px 30px rgb(246 196 3);
     transition-duration: 0.8s;
     .card-header {
+      transition-duration: 0.8s;
+
       mix-blend-mode: screen;
     }
   }
-  .card-header {
-    font-family: "Sigmar One";
-    will-change: transform;
 
-    border: 7px solid #f8a918;
-    border-top-right-radius: 10px;
-    border-top-left-radius: 10px;
-    background-color: #efcf95;
-    padding: 1rem;
-    height: 100px;
+  .refNumber {
+    font-family: "Sigmar One";
+    color: #5f2a13;
   }
 }
 </style>
-
-<!-- mix-blend-mode: hard-light; -->
