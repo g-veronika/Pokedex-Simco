@@ -1,5 +1,6 @@
 <template>
   <div class="">
+    <h2 class="text-center text-xl pb-4">Connexion</h2>
     <form @submit.prevent="">
       <div class="flex flex-col pb-4">
         <label for="username">Username</label>
@@ -18,7 +19,7 @@
           Connexion
         </button>
         <div v-if="isInvalid" class="flex justify-center pt-8">
-          <p class="align-center text-xl text-rose-900">Vos identifiants ne sont pas corrects :(</p>
+          <p class="text-center text-xl text-[#ba1212]">Vos identifiants ne sont pas corrects.</p>
         </div>
       </div>
     </form>
@@ -60,6 +61,7 @@ const handleSubmit = async () => {
         // On stock les 2 tokens dans localStorage
         window.localStorage.setItem("accessToken", response.data.access);
         window.localStorage.setItem("refreshToken", response.data.refresh);
+        window.localStorage.setItem("username", username.value);
         user.$patch({
           userName: username.value,
         });

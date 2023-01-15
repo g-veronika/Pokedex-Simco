@@ -1,14 +1,13 @@
 <template>
-  <div class="p-8 min-h-screen">
-    <h1 class="text-3xl text-center text-sky-900 font-bold pb-8 pt-8">Bienvenue a Pokedex</h1>
-    <div class="flex justify-center p-8 gap-x-40">
+  <div class="p-8 min-h-screen flex flex-col">
+    <h1 class="text-3xl text-center pb-8 pt-8">Bienvenue a Pokedex</h1>
+    <div class="flex justify-center p-8 gap-x-40 min-h-[600px] min-w-[300px]">
       <div class="flex flex-col w-[300px]">
-        <h2 class="text-center text-xl pb-4">Connexion</h2>
         <SignIn />
       </div>
-      <div class="flex flex-col justify-center w-[300px]">
+      <div class="flex flex-col justify-start w-[400px]">
         <div v-if="isCreated" class="flex justify-center">
-          <p class="text-xl text-sky-800">Votre compte a bien été créé ! 😎</p>
+          <p class="text-xl">Votre compte a bien été créé ! 😎</p>
         </div>
         <div v-else>
           <h2 class="text-center text-xl pb-4">Nouvel utilisateur?</h2>
@@ -24,6 +23,13 @@
           </div>
         </div>
       </div>
+    </div>
+    <div class="flex justify-center">
+      <img
+        src="../assets/images/PikPng.com_pokemon-starters-png_726234.png"
+        class="w-[350px]"
+        alt=""
+      />
     </div>
   </div>
 </template>

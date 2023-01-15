@@ -1,9 +1,11 @@
 <template>
-  <div class="min-h-screen">
+  <div class="min-h-screen relative">
     <Navbar />
-    <div class="flex justify-center pt-16 gap-10 flex-wrap p-8">
-      <div v-for="pokemon in pokemons" class="card">
-        <div class="card-header flex justify-center items-center text-center pt-4 text-lg">
+    <div class="flex justify-center pt-16 gap-10 flex-wrap p-8 min-h-screen">
+      <div @click="openModal(pokemon)" v-for="pokemon in pokemons" class="card">
+        <div
+          class="card-header flex justify-center items-center text-center pt-4 text-lg text-[#4b0a0a]"
+        >
           {{ pokemon.name }}
         </div>
         <div class="card-body flex justify-center mt-[30px]">
@@ -16,7 +18,7 @@
       <button
         type="button"
         :disabled="previousPage === null"
-        class="cursor-pointer text-8xl disabled:text-stone-600 disabled:pointer-events-none text-orange-600 hover:text-orange-800 disabled:opacity-60"
+        class="cursor-pointer text-8xl disabled:text-stone-600 disabled:pointer-events-none text-yellow-500 hover:text-yellow-600 disabled:opacity-60"
         @click="goPreviousPage()"
       >
         &#8592;
@@ -24,23 +26,38 @@
       <button
         type="button"
         :disabled="nextPage === null"
-        class="cursor-pointer text-8xl disabled:text-stone-600 disabled:pointer-events-none text-orange-600 hover:text-orange-800 disabled:opacity-60"
+        class="cursor-pointer text-8xl disabled:text-stone-600 disabled:pointer-events-none text-yellow-500 hover:text-yellow-600 disabled:opacity-60"
         @click="goNextPage()"
       >
         &rarr;
       </button>
     </div>
+    <PokemonModal
+      :class="isModalVisible ? 'opacity-1' : 'opacity-0'"
+      v-if="isModalVisible"
+      @close="isModalVisible = false"
+      :pokemon="pokemon"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import Navbar from "@/components/Navbar.vue";
-import { ref, inject } from "vue";
+import PokemonModal from "@/components/PokemonModal.vue";
+import router from "@/router";
+import { ref, inject, onBeforeMount } from "vue";
 
 const pokemons = ref([]);
 
 const nextPage = ref(null);
 const previousPage = ref(null);
+const isModalVisible = ref(false);
+const pokemon = ref({});
+
+const openModal = (item) => {
+  pokemon.value = item;
+  isModalVisible.value = true;
+};
 
 const axios: any = inject("axios");
 
@@ -57,6 +74,7 @@ const getList = async (url: string): void => {
   pokemons.value.forEach(async (pokemon) => {
     pokemon.img = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.ref_number}.png`;
   });
+  console.log(pokemons.value);
 };
 getList(showPokemonsURL);
 
@@ -70,6 +88,13 @@ const goPreviousPage = () => {
     getList(previousPage.value);
   }
 };
+
+// onBeforeMount(() => {
+//   const userName = window.localStorage.getItem("username");
+//   if (!userName || userName === "") {
+//     router.push("./connection");
+//   }
+// });
 </script>
 
 <style scoped lang="scss">
@@ -90,7 +115,7 @@ const goPreviousPage = () => {
     will-change: transform;
     transition-duration: 0.8s;
 
-    border: 7px solid #f8a918;
+    border: 3px solid #f8a918;
     border-top-right-radius: 10px;
     border-top-left-radius: 10px;
     background-color: #efcf95;
@@ -99,10 +124,8 @@ const goPreviousPage = () => {
   }
 
   &:hover {
-    width: 280px;
-    height: 390px;
     background-color: rgb(235, 233, 233);
-    transform: rotate(5deg);
+    transform: rotate(5deg) scale(1.05);
     box-shadow: 5px 5px 30px rgb(246 196 3);
     transition-duration: 0.8s;
     .card-header {

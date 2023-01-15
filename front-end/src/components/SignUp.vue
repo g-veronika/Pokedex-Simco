@@ -1,20 +1,42 @@
 <template>
   <div>
-    <div class="text-center text-xl pt-8 pb-4">Creer un compte</div>
+    <div class="text-center text-xl pt-8 pb-4">
+      <h2>Creer un compte</h2>
+    </div>
 
     <div class="">
       <form @submit.prevent="">
         <div class="flex flex-col pb-4">
           <label for="email">Email </label>
-          <input v-model="email" class="" type="email" name="name" required />
+          <input
+            @input="isFormNonValid = false"
+            v-model="email"
+            class=""
+            type="email"
+            name="name"
+            required
+          />
         </div>
         <div class="flex flex-col pb-4">
           <label for="username">Username </label>
-          <input v-model="username" class="username" type="text" name="username" required />
+          <input
+            @input="isFormNonValid = false"
+            v-model="username"
+            class="username"
+            type="text"
+            name="username"
+            required
+          />
         </div>
         <div class="flex flex-col">
           <label for="password">Mot de passe</label>
-          <input v-model="password" type="password" name="password" required />
+          <input
+            @input="isFormNonValid = false"
+            v-model="password"
+            type="password"
+            name="password"
+            required
+          />
         </div>
         <div class="pt-8">
           <button
@@ -24,6 +46,9 @@
           >
             Inscription
           </button>
+          <p class="error-message text-center pt-2" v-if="isFormNonValid">
+            Les informations ne sont pas valides
+          </p>
         </div>
       </form>
     </div>
@@ -37,12 +62,15 @@ const axios: any = inject("axios");
 const email = ref("");
 const username = ref("");
 const password = ref("");
+const isFormNonValid = ref(false);
 
 const emit = defineEmits<{
   (e: "submitEvent"): void;
 }>();
 
 const handleSubmit = async () => {
+  isFormNonValid.value = false;
+
   // Avant de envoyer la requete a l'API on verifie que tous les champs sont remplis
   if (email.value === "" || username.value === "" || password.value === "") {
     return;
@@ -70,6 +98,7 @@ const handleSubmit = async () => {
     })
     .catch((error) => {
       console.log(error);
+      isFormNonValid.value = true;
     });
 };
 </script>
@@ -81,5 +110,10 @@ form {
     border-radius: 3px;
     padding: 5px;
   }
+}
+
+.error-message {
+  color: #ed5656;
+  text-shadow: 1px 1px 0px #000000;
 }
 </style>

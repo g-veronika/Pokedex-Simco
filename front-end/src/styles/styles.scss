@@ -1,2 +1,24 @@
 @import "./tailwind.css";
 @import url(https://fonts.googleapis.com/css?family=Sigmar+One);
+
+html {
+    font-family: "Sigmar One";
+}
+
+h1 {
+    color: #febe4a;
+    text-shadow: 4px 2px 4px #122c7b;
+    font-size: 1.2rem;
+}
+
+h2,
+p {
+    color: #fff0dd;
+    text-shadow: 2px 1px 4px #000000;
+}
+
+button,
+label {
+    color: #deceba;
+    text-shadow: 1px 1px 5px #000000;
+}
