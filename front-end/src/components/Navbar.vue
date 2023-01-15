@@ -52,7 +52,7 @@ const user = useUserStore();
 
 const homeRedirection = () => {
   if (route.name === "pokedex") {
-    router.go();
+    router.go(0);
   }
   router.push("/");
 };

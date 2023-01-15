@@ -34,7 +34,7 @@
     </div>
     <PokemonModal
       :class="isModalVisible ? 'opacity-1' : 'opacity-0'"
-      v-if="isModalVisible"
+      v-if="isModalVisible && pokemon"
       @close="isModalVisible = false"
       :pokemon="pokemon"
     />
@@ -45,24 +45,25 @@
 import Navbar from "@/components/Navbar.vue";
 import PokemonModal from "@/components/PokemonModal.vue";
 import { getMyID } from "@/getId";
+import type { Pokemon } from "@/types/pokemons";
 import { ref, inject, onMounted } from "vue";
 
-const pokemons = ref([]);
+const pokemons = ref<Pokemon[]>([]);
 const axios: any = inject("axios");
 
 const nextPage = ref(null);
 const previousPage = ref(null);
 const isModalVisible = ref(false);
-const pokemon = ref({});
+const pokemon = ref<Pokemon | undefined>();
 
-const openModal = (item) => {
+const openModal = (item: Pokemon) => {
   pokemon.value = item;
   isModalVisible.value = true;
 };
 
 const showPokemonsURL = "https://pokedexbe-akd7k.dev.simco.io/pokedex/?limit=25";
 
-const getList = async (url: string): void => {
+const getList = async (url: string): Promise<void> => {
   await axios.get(url).then((response: { data: any }) => {
     pokemons.value = response.data.results;
     nextPage.value = response.data.next;
@@ -73,6 +74,7 @@ const getList = async (url: string): void => {
   pokemons.value.forEach(async (pokemon) => {
     pokemon.img = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.ref_number}.png`;
   });
+  console.log(pokemons.value);
 };
 getList(showPokemonsURL);
 

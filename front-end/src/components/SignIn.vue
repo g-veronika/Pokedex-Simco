@@ -67,7 +67,7 @@ const handleSubmit = async () => {
         router.push("/");
       }
     })
-    .catch((error) => {
+    .catch((error: any) => {
       console.log(error);
       isInvalid.value = true;
     });

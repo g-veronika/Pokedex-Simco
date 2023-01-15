@@ -4,6 +4,7 @@
     <div class="py-8">
       <h1 class="text-center">Votre equipe</h1>
     </div>
+    <button type="button" @click="giveXp" v-if="pokemons.length !== 0">Entrainer</button>
     <div class="flex justify-center pt-16 gap-10 flex-wrap p-8 max-w-[1200px] m-auto">
       <div v-if="pokemons.length === 0" v-for="pokemon in 6" class="flex justify-center gap-10 p-8">
         <div class="card"></div>
@@ -11,13 +12,14 @@
       <!-- <div v-else v-for="pokemon in 6" class="flex justify-center gap-10 p-8">
         <div class="card"></div>
       </div> -->
-      <div v-else v-for="pokemon in pokemons" class="card">
+      <div v-else v-for="pokemon in pokemons" class="card" @click="selectedPokemon = pokemon">
         <div
           class="card-header flex justify-center items-center text-center pt-4 text-lg text-[#4b0a0a]"
         >
           {{ pokemon.nickname }}
         </div>
         <div class="card-body flex justify-center mt-[30px]">
+          <p>lvl: {{ pokemon.level }} / exp: {{ pokemon.experience }}</p>
           <img class="w-[200px]" :src="pokemon.img" :alt="pokemon.name" />
           <div class="refNumber text-xl">{{ pokemon.ref_number }}</div>
         </div>
@@ -32,12 +34,14 @@ import Navbar from "@/components/Navbar.vue";
 import { getMyID } from "@/getId";
 import router from "@/router";
 import { useUserStore } from "@/stores/user";
+import type { Pokemon } from "@/types/pokemons";
 import { inject, ref, watch } from "vue";
 
 const user = useUserStore();
 const axios: any = inject("axios");
 const accessToken = window.localStorage.getItem("accessToken");
-const pokemons = ref([]);
+const pokemons = ref<Pokemon[]>([]);
+const selectedPokemon = ref();
 
 const getChosenCards = async () => {
   const id = user.$state.id;
@@ -48,7 +52,6 @@ const getChosenCards = async () => {
     })
     .then((response: { data: any }) => {
       if (response.data) {
-        console.log(response.data);
         pokemons.value = response.data.results;
         pokemons.value.forEach(async (pokemon) => {
           pokemon.img = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.pokedex_creature}.png`;
@@ -77,6 +80,22 @@ const deleteCard = async (cardId: number) => {
 getMyID().then(() => {
   getChosenCards();
 });
+
+const giveXp = async () => {
+  await axios
+    .post(
+      `https://pokedexbe-akd7k.dev.simco.io/pokemon/${selectedPokemon.value.id}/give_xp/`,
+      { amount: 100 },
+      {
+        method: "POST",
+        headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/json" },
+      }
+    )
+    .then((response: { data: any }) => {
+      router.go(0);
+    })
+    .catch(() => {});
+};
 </script>
 
 <style scoped lang="scss">

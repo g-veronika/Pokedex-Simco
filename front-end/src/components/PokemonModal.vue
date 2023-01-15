@@ -60,6 +60,7 @@
 import { onMounted, onUnmounted, inject, ref } from "vue";
 import { useUserStore } from "@/stores/user";
 import { useRouter } from "vue-router";
+import type { Pokemon } from "@/types/pokemons";
 
 const axios: any = inject("axios");
 const user = useUserStore();
@@ -72,7 +73,7 @@ const emit = defineEmits<{
 }>();
 
 const props = defineProps<{
-  pokemon: {};
+  pokemon: Pokemon;
 }>();
 
 const addToTeam = async () => {
