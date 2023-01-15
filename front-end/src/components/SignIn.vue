@@ -61,7 +61,6 @@ const handleSubmit = async () => {
         // On stock les 2 tokens dans localStorage
         window.localStorage.setItem("accessToken", response.data.access);
         window.localStorage.setItem("refreshToken", response.data.refresh);
-        window.localStorage.setItem("username", username.value);
         user.$patch({
           userName: username.value,
         });

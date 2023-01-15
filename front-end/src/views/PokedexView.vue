@@ -44,10 +44,11 @@
 <script setup lang="ts">
 import Navbar from "@/components/Navbar.vue";
 import PokemonModal from "@/components/PokemonModal.vue";
-import router from "@/router";
-import { ref, inject, onBeforeMount } from "vue";
+import { getMyID } from "@/getId";
+import { ref, inject, onMounted } from "vue";
 
 const pokemons = ref([]);
+const axios: any = inject("axios");
 
 const nextPage = ref(null);
 const previousPage = ref(null);
@@ -58,8 +59,6 @@ const openModal = (item) => {
   pokemon.value = item;
   isModalVisible.value = true;
 };
-
-const axios: any = inject("axios");
 
 const showPokemonsURL = "https://pokedexbe-akd7k.dev.simco.io/pokedex/?limit=25";
 
@@ -74,7 +73,6 @@ const getList = async (url: string): void => {
   pokemons.value.forEach(async (pokemon) => {
     pokemon.img = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.ref_number}.png`;
   });
-  console.log(pokemons.value);
 };
 getList(showPokemonsURL);
 
@@ -89,12 +87,9 @@ const goPreviousPage = () => {
   }
 };
 
-// onBeforeMount(() => {
-//   const userName = window.localStorage.getItem("username");
-//   if (!userName || userName === "") {
-//     router.push("./connection");
-//   }
-// });
+onMounted(() => {
+  getMyID();
+});
 </script>
 
 <style scoped lang="scss">

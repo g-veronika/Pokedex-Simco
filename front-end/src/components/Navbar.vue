@@ -9,13 +9,13 @@
       />
       <div class="">
         <div class="flex justify-center">
-          <h2>
-            Bonjour <span class="capitalize">{{ username }}</span>
+          <h2 v-if="user.$state.userName !== ''">
+            Bonjour <span class="capitalize">{{ user.$state.userName }}</span>
           </h2>
         </div>
       </div>
 
-      <div class="pr-4">
+      <div class="pr-4" v-if="user.$state.userName !== ''">
         <RouterLink to="/team">
           <button class="cursor-pointer transition duration-300 ease-in-out hover:scale-110">
             Mon equipe
@@ -24,10 +24,18 @@
       </div>
       <div class="pr-4">
         <button
+          v-if="user.$state.userName !== ''"
           @click="disconnect"
           class="cursor-pointer transition duration-300 ease-in-out hover:scale-110"
         >
           Déconnexion
+        </button>
+        <button
+          v-else
+          @click="router.push('/connection')"
+          class="cursor-pointer transition duration-300 ease-in-out hover:scale-110"
+        >
+          Connexion
         </button>
       </div>
     </div>
@@ -35,19 +43,19 @@
 </template>
 
 <script setup lang="ts">
+import { useUserStore } from "@/stores/user";
 import { useRoute, useRouter } from "vue-router";
 
 const router = useRouter();
 const route = useRoute();
+const user = useUserStore();
 
 const homeRedirection = () => {
   if (route.name === "pokedex") {
-    router.go("/");
+    router.go();
   }
   router.push("/");
 };
-
-const username = window.localStorage.getItem("username");
 
 const disconnect = () => {
   window.localStorage.clear();

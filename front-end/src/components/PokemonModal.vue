@@ -39,9 +39,15 @@
             >
               {{ pokemon.type_2 }}
             </div>
-            <div class="flex justify-center py-4 cursor-pointer text-xl hover:text-black">
+            <button
+              v-if="user.$state.userName != '' && !isRegistered"
+              type="button"
+              @click="addToTeam"
+              class="flex justify-center py-4 cursor-pointer text-xl hover:text-black"
+            >
               Ajouter
-            </div>
+            </button>
+            <div class="text-center mt-4" v-if="isRegistered">Pokemon ajouté</div>
           </div>
         </div>
       </div>
@@ -52,8 +58,14 @@
 
 <script setup lang="ts">
 import { onMounted, onUnmounted, inject, ref } from "vue";
+import { useUserStore } from "@/stores/user";
+import { useRouter } from "vue-router";
 
 const axios: any = inject("axios");
+const user = useUserStore();
+const accessToken = window.localStorage.getItem("accessToken");
+const router = useRouter();
+const isRegistered = ref(false);
 
 const emit = defineEmits<{
   (e: "close"): void;
@@ -62,6 +74,57 @@ const emit = defineEmits<{
 const props = defineProps<{
   pokemon: {};
 }>();
+
+const addToTeam = async () => {
+  const id = user.$state.id;
+  const pokemonURL = "https://pokedexbe-akd7k.dev.simco.io/pokemon/";
+
+  const data = {
+    pokedex_creature: props.pokemon.ref_number,
+    trainer: id,
+    nickname: props.pokemon.name,
+    experience: 0,
+  };
+
+  await axios
+    .post(pokemonURL, data, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/json" },
+    })
+    .then((response: { data: any }) => {
+      if (response.data) {
+        isRegistered.value = true;
+      }
+    })
+    .catch(async () => {
+      const refreshToken = window.localStorage.getItem("refreshToken");
+      await axios
+        .post(
+          "https://pokedexbe-akd7k.dev.simco.io/api/token/refresh/",
+          {
+            refresh: refreshToken,
+          },
+          {
+            method: "POST",
+          }
+        )
+        .then(async (response: { data: any }) => {
+          window.localStorage.setItem("accessToken", response.data.access);
+
+          await axios
+            .post(pokemonURL, data, {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${response.data.access}`,
+                Accept: "application/json",
+              },
+            })
+            .catch(() => {
+              router.push("/connection");
+            });
+        });
+    });
+};
 
 onMounted(() => {
   document.body.style.overflow = "hidden";

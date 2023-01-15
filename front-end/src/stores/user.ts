@@ -5,9 +5,12 @@ export const useUserStore = defineStore({
 
 
   state: () : {
-    userName: string | null
+    userName: string,
+    id: number | null
   } => ({
-    userName: null
+    userName: "",
+    id: null
   }),
+
 }
 )
