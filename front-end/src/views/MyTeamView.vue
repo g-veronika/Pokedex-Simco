@@ -98,7 +98,8 @@ const deleteCard = async (cardId: number) => {
           headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
         })
         .then((response: { data: any }) => {
-          router.go(0);
+          //Router.go(0) ne marche pas sur Netlify
+          window.location.reload();
         });
     })
     .catch(() => {
@@ -120,7 +121,7 @@ const giveXp = async () => {
           }
         )
         .then((response: { data: any }) => {
-          router.go(0);
+          window.location.reload();
         });
     })
     .catch((error) => {
