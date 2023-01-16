@@ -25,7 +25,7 @@ const router = createRouter({
       component: MyTeamView,
     },
     {
-      path: "/*",
+      path: "/:pathMatch(.*)*",
       name: "error",
       component: ErrorView,
     },
