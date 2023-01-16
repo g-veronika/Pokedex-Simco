@@ -1,6 +1,6 @@
 <template>
   <div class="p-8 min-h-screen flex flex-col">
-    <h1 class="text-3xl text-center pb-8 pt-8">Bienvenue à Pokedex</h1>
+    <h1 class="text-3xl text-center pb-8 pt-8">Bienvenue !</h1>
     <div
       class="flex justify-center p-8 lg:gap-x-40 lg:min-h-[600px] lg:min-w-[300px] flex-col lg:flex-row"
     >

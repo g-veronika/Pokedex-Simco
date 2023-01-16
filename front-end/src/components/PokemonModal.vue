@@ -5,7 +5,7 @@
       class="modal-container bg-zinc-200 flex justify-center h-[700px] w-[500px] z-10 relative rounded-xl text-[#4b0a0a]"
     >
       <div
-        class="absolute top-4 cursor-pointer text-xl leading-4 right-4 hover:text-black"
+        class="absolute top-4 cursor-pointer text-2xl pt-8 leading-4 right-4 hover:text-black lg:pt-0"
         @click="emit('close')"
       >
         x
@@ -14,15 +14,17 @@
         class="modal-body w-full"
         :class="pokemon.legendary ? ' rounded-xl shadow-2xl shadow-amber-400' : ''"
       >
-        <div class="modal-header text-center text-xl p-[3rem] rounded bg-[#efcf95]">
+        <div
+          class="modal-header text-center text-xl px-[2rem] py-[2.5rem] rounded bg-[#efcf95] lg:p-[3rem]"
+        >
           {{ pokemon.name }}
         </div>
         <div class="flex justify-center flex-col p-8">
           <div class="image flex justify-center flex-col items-center text-l">
             <div class="text-xl"># {{ pokemon.ref_number }}</div>
-            <img class="w-[200px] py-8" :src="pokemon.img" :alt="pokemon.name" />
+            <img class="w-[200px] pb-4" :src="pokemon.img" :alt="pokemon.name" />
           </div>
-          <div class="flex flex-col gap-y-4 w-3/5 mx-auto">
+          <div class="flex flex-col gap-y-2 w-3/5 mx-auto lg:gap-y-4">
             <div class="p-2 rounded-xl bg-fuchsia-200 text-center">
               Generation : {{ pokemon.generation }}
             </div>
