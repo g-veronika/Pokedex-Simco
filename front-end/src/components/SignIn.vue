@@ -14,7 +14,7 @@
         <button
           @click="handleSubmit"
           type="submit"
-          class="bg-cyan-700 w-full font-bold text-white p-4 rounded hover:bg-cyan-900 duration-200"
+          class="bg-sky-700 w-full font-bold text-white p-4 rounded hover:bg-sky-900 duration-200"
         >
           Connexion
         </button>
@@ -61,6 +61,7 @@ const handleSubmit = async () => {
         // On stock les 2 tokens dans localStorage
         window.localStorage.setItem("accessToken", response.data.access);
         window.localStorage.setItem("refreshToken", response.data.refresh);
+        //On stock username dans Pinia
         user.$patch({
           userName: username.value,
         });
@@ -75,6 +76,9 @@ const handleSubmit = async () => {
 </script>
 
 <style scoped lang="scss">
+button {
+  box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.5);
+}
 form {
   input {
     border: 2px solid black;

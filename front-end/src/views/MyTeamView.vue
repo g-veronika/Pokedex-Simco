@@ -2,25 +2,47 @@
   <div class="min-h-screen relative">
     <Navbar />
     <div class="py-8">
-      <h1 class="text-center">Votre equipe</h1>
+      <h1 class="text-center text-2xl">Votre equipe</h1>
     </div>
-    <button type="button" @click="giveXp" v-if="pokemons.length !== 0">Entrainer</button>
+    <div class="flex justify-center items-center flex-col">
+      <p class="py-8 text-center mx-auto">
+        Cliquez sur la carte et puis sur ENTRAINER pour donner de l'experience à votre pokemon
+      </p>
+
+      <button
+        class="x-btn bg-sky-700 transition duration-300 ease-in-out hover:bg-sky-900 p-4 rounded"
+        type="button"
+        @click="giveXp"
+        v-if="pokemons.length !== 0"
+      >
+        Entrainer
+      </button>
+    </div>
     <div class="flex justify-center pt-16 gap-10 flex-wrap p-8 max-w-[1200px] m-auto">
       <div v-if="pokemons.length === 0" v-for="pokemon in 6" class="flex justify-center gap-10 p-8">
-        <div class="card"></div>
+        <div
+          @click="router.push('/')"
+          class="empty-card flex justify-center items-center cursor-pointer w-[250px] min-w-[250px] h-[360px]"
+        >
+          <div class="plus text-5xl text-white">+</div>
+        </div>
       </div>
-      <!-- <div v-else v-for="pokemon in 6" class="flex justify-center gap-10 p-8">
-        <div class="card"></div>
-      </div> -->
-      <div v-else v-for="pokemon in pokemons" class="card" @click="selectedPokemon = pokemon">
+
+      <div
+        v-else
+        v-for="pokemon in pokemons"
+        :class="selectedPokemon === pokemon ? 'active' : ''"
+        class="card"
+        @click="selectedPokemon = pokemon"
+      >
         <div
           class="card-header flex justify-center items-center text-center pt-4 text-lg text-[#4b0a0a]"
         >
           {{ pokemon.nickname }}
         </div>
-        <div class="card-body flex justify-center mt-[30px]">
+        <div class="card-body flex justify-center flex-col items-center mt-[30px]">
           <p>lvl: {{ pokemon.level }} / exp: {{ pokemon.experience }}</p>
-          <img class="w-[200px]" :src="pokemon.img" :alt="pokemon.name" />
+          <img class="w-[140px]" :src="pokemon.img" :alt="pokemon.name" />
           <div class="refNumber text-xl">{{ pokemon.ref_number }}</div>
         </div>
         <div @click="deleteCard(pokemon.id)" class="flex justify-center pb-8">Supprimer</div>
@@ -31,114 +53,109 @@
 
 <script setup lang="ts">
 import Navbar from "@/components/Navbar.vue";
-import { getMyID } from "@/getId";
+import { accessToken, auth } from "@/getId";
 import router from "@/router";
 import { useUserStore } from "@/stores/user";
 import type { Pokemon } from "@/types/pokemons";
-import { inject, ref, watch } from "vue";
+import { inject, ref } from "vue";
 
-const user = useUserStore();
 const axios: any = inject("axios");
-const accessToken = window.localStorage.getItem("accessToken");
 const pokemons = ref<Pokemon[]>([]);
 const selectedPokemon = ref();
+const user = useUserStore();
 
 const getChosenCards = async () => {
-  const id = user.$state.id;
-  const pokemonURL = `https://pokedexbe-akd7k.dev.simco.io/pokemon/?trainer=${id}`;
-  await axios
-    .get(pokemonURL, {
-      headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/json" },
-    })
-    .then((response: { data: any }) => {
-      if (response.data) {
-        pokemons.value = response.data.results;
-        pokemons.value.forEach(async (pokemon) => {
-          pokemon.img = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.pokedex_creature}.png`;
-        });
-      }
-    })
-    .catch(() => {
-      // router.push("/");
-    });
+  await auth().then(async () => {
+    const id = user.$state.id;
+    const token = accessToken();
+
+    const pokemonURL = `https://pokedexbe-akd7k.dev.simco.io/pokemon/?trainer=${id}`;
+    await axios
+      .get(pokemonURL, {
+        headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
+      })
+      .then((response: { data: any }) => {
+        if (response.data) {
+          pokemons.value = response.data.results;
+          pokemons.value.forEach(async (pokemon) => {
+            pokemon.img = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.pokedex_creature}.png`;
+          });
+        }
+      })
+      .catch(() => {
+        router.push("/connection");
+      });
+  });
 };
 
 const deleteCard = async (cardId: number) => {
-  await axios
-    .delete(`https://pokedexbe-akd7k.dev.simco.io/pokemon/${cardId}`, {
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/json" },
-    })
-    .then((response: { data: any }) => {
-      router.go(0);
+  await auth()
+    .then(async () => {
+      const token = accessToken();
+      await axios
+        .delete(`https://pokedexbe-akd7k.dev.simco.io/pokemon/${cardId}`, {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
+        })
+        .then((response: { data: any }) => {
+          router.go(0);
+        });
     })
     .catch(() => {
-      // console.log("catch");
+      router.push("/connection");
     });
 };
 
-getMyID().then(() => {
-  getChosenCards();
-});
-
 const giveXp = async () => {
-  await axios
-    .post(
-      `https://pokedexbe-akd7k.dev.simco.io/pokemon/${selectedPokemon.value.id}/give_xp/`,
-      { amount: 100 },
-      {
-        method: "POST",
-        headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/json" },
-      }
-    )
-    .then((response: { data: any }) => {
-      router.go(0);
+  await auth()
+    .then(async () => {
+      const token = accessToken();
+      await axios
+        .post(
+          `https://pokedexbe-akd7k.dev.simco.io/pokemon/${selectedPokemon.value.id}/give_xp/`,
+          { amount: 100 },
+          {
+            method: "POST",
+            headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
+          }
+        )
+        .then((response: { data: any }) => {
+          router.go(0);
+        });
     })
-    .catch(() => {});
+    .catch((error) => {
+      if (error.response.status === 401) {
+        router.push("/connection");
+      }
+    });
 };
+
+getChosenCards();
 </script>
 
 <style scoped lang="scss">
-.card {
-  background: rgb(251, 198, 63);
-  background: radial-gradient(circle, rgba(251, 198, 63, 1) 0%, rgba(252, 143, 70, 1) 100%);
+.x-btn {
+  box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.5);
+}
+.empty-card {
   border-radius: 10px;
   box-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
-  width: 250px;
-  min-width: 250px;
-  height: 360px;
   transition-duration: 0.8s;
-  cursor: pointer;
   will-change: transform;
-
-  .card-header {
-    font-family: "Sigmar One";
-    will-change: transform;
-    transition-duration: 0.8s;
-
-    border: 3px solid #f8a918;
-    border-top-right-radius: 10px;
-    border-top-left-radius: 10px;
-    background-color: #efcf95;
-    padding: 2rem;
-    height: 100px;
-  }
-
   &:hover {
-    background-color: rgb(235, 233, 233);
     transform: rotate(5deg) scale(1.05);
-    box-shadow: 5px 5px 30px rgb(246 196 3);
     transition-duration: 0.8s;
-    .card-header {
-      transition-duration: 0.8s;
-
-      mix-blend-mode: screen;
-    }
   }
 
-  .refNumber {
-    font-family: "Sigmar One";
-    color: #5f2a13;
+  .plus {
+    text-shadow: 2px 1px 4px #1c1a1a;
   }
+}
+
+.active {
+  background-color: rgb(235, 233, 233);
+  transform: rotate(5deg) scale(1.05);
+  box-shadow: 5px 5px 30px rgb(217 70 239);
+  transition-duration: 0.8s;
 }
 </style>

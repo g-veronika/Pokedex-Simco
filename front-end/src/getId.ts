@@ -1,46 +1,52 @@
 import axios from "axios";
-import { useRouter } from "vue-router";
 import { useUserStore } from "./stores/user";
 
-const router = useRouter();
-
-export const getMyID = async (): Promise<void> => {
+export const auth = async (): Promise<void> => {
   const user = useUserStore();
+
   if (!accessToken()) {
     return;
   } else {
-    console.log(accessToken());
     const URL = "https://pokedexbe-akd7k.dev.simco.io/api/users/me/";
     await axios
       .get(URL, {
         headers: { Authorization: `Bearer ${accessToken()}`, Accept: "application/json" },
       })
+
+      // On stock username et id obtenus dans Pinia
       .then((response: { data: any }) => {
         user.$patch({
           userName: response.data.username,
           id: response.data.id,
         });
       })
+
+      //If erreur d'authentification on lance refreshToken() et on relance requete /api/users/me
       .catch(async (error) => {
         if (error.response.status === 401) {
-          refreshToken();
-          if (accessToken())
-            await axios
-              .get(URL, {
-                headers: {
-                  Authorization: `Bearer ${accessToken()}`,
-                  Accept: "application/json",
-                },
-              })
-              .then((response: { data: any }) => {
-                user.$patch({
-                  userName: response.data.username,
-                  id: response.data.id,
+          console.log("before refresh token");
+          //On remet a jour accessToken
+          await refreshToken().then(async () => {
+            console.log("before /users/me");
+
+            if (accessToken()) {
+              await axios
+                .get(URL, {
+                  headers: {
+                    Authorization: `Bearer ${accessToken()}`,
+                    Accept: "application/json",
+                  },
+                })
+                .then((response: { data: any }) => {
+                  console.log("before patch pinia");
+
+                  user.$patch({
+                    userName: response.data.username,
+                    id: response.data.id,
+                  });
                 });
-              })
-              .catch(() => {
-                router.push("/connection");
-              });
+            }
+          });
         }
       });
   }

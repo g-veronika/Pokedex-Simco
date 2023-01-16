@@ -43,11 +43,13 @@
               v-if="user.$state.userName != '' && !isRegistered"
               type="button"
               @click="addToTeam"
-              class="flex justify-center py-4 cursor-pointer text-xl hover:text-black"
+              class="flex justify-center py-4 m-auto cursor-pointer text-xl hover:text-orange-700"
             >
               Ajouter
             </button>
-            <div class="text-center mt-4" v-if="isRegistered">Pokemon ajouté</div>
+            <div class="text-center text-xl mt-4 text-orange-700" v-if="isRegistered">
+              Pokemon ajouté
+            </div>
           </div>
         </div>
       </div>
@@ -61,13 +63,12 @@ import { onMounted, onUnmounted, inject, ref } from "vue";
 import { useUserStore } from "@/stores/user";
 import { useRouter } from "vue-router";
 import type { Pokemon } from "@/types/pokemons";
+import { accessToken, auth } from "@/getId";
 
 const axios: any = inject("axios");
 const user = useUserStore();
-const accessToken = window.localStorage.getItem("accessToken");
 const router = useRouter();
 const isRegistered = ref(false);
-
 const emit = defineEmits<{
   (e: "close"): void;
 }>();
@@ -77,54 +78,32 @@ const props = defineProps<{
 }>();
 
 const addToTeam = async () => {
-  const id = user.$state.id;
-  const pokemonURL = "https://pokedexbe-akd7k.dev.simco.io/pokemon/";
+  auth().then(async () => {
+    const id = user.$state.id;
+    const pokemonURL = "https://pokedexbe-akd7k.dev.simco.io/pokemon/";
 
-  const data = {
-    pokedex_creature: props.pokemon.ref_number,
-    trainer: id,
-    nickname: props.pokemon.name,
-    experience: 0,
-  };
+    const data = {
+      pokedex_creature: props.pokemon.ref_number,
+      trainer: id,
+      nickname: props.pokemon.name,
+      experience: 0,
+    };
+    const token = accessToken();
 
-  await axios
-    .post(pokemonURL, data, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/json" },
-    })
-    .then((response: { data: any }) => {
-      if (response.data) {
-        isRegistered.value = true;
-      }
-    })
-    .catch(async () => {
-      const refreshToken = window.localStorage.getItem("refreshToken");
-      await axios
-        .post(
-          "https://pokedexbe-akd7k.dev.simco.io/api/token/refresh/",
-          {
-            refresh: refreshToken,
-          },
-          {
-            method: "POST",
-          }
-        )
-        .then(async (response: { data: any }) => {
-          window.localStorage.setItem("accessToken", response.data.access);
-
-          await axios
-            .post(pokemonURL, data, {
-              method: "POST",
-              headers: {
-                Authorization: `Bearer ${response.data.access}`,
-                Accept: "application/json",
-              },
-            })
-            .catch(() => {
-              router.push("/connection");
-            });
-        });
-    });
+    await axios
+      .post(pokemonURL, data, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
+      })
+      .then((response: { data: any }) => {
+        if (response.data) {
+          isRegistered.value = true;
+        }
+      })
+      .catch(() => {
+        router.push("/connection");
+      });
+  });
 };
 
 onMounted(() => {

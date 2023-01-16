@@ -1,8 +1,8 @@
 <template>
   <div class="px-[2rem] py-[1rem] text-[1rem]">
-    <div class="flex justify-between items-center pt-2">
+    <div class="flex justify-between gap-y-8 items-center pt-2 flex-col lg:flex-row">
       <img
-        class="w-[225px] cursor-pointer pl-8"
+        class="w-[225px] cursor-pointer"
         src="../assets/images/Pokédex_logo.png"
         alt=""
         @click="homeRedirection"
@@ -14,15 +14,14 @@
           </h2>
         </div>
       </div>
-
-      <div class="pr-4" v-if="user.$state.userName !== ''">
+      <div class="" v-if="user.$state.userName !== '' && route.name !== 'team'">
         <RouterLink to="/team">
           <button class="cursor-pointer transition duration-300 ease-in-out hover:scale-110">
             Mon equipe
           </button>
         </RouterLink>
       </div>
-      <div class="pr-4">
+      <div class="">
         <button
           v-if="user.$state.userName !== ''"
           @click="disconnect"
