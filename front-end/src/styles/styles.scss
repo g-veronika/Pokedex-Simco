@@ -17,8 +17,60 @@ p {
     text-shadow: 2px 1px 4px #000000;
 }
 
+form input {
+    border: 2px solid #aeaeae !important;
+    border-radius: 5px;
+}
+
+.error-404 {
+    text-shadow: 4px 3px 4px #ffffff;
+}
+
 button,
 label {
-    color: #deceba;
+    color: #f1e8dc;
     text-shadow: 1px 1px 5px #000000;
+}
+
+.card {
+    background: rgb(251, 198, 63);
+    background: radial-gradient(circle, rgba(251, 198, 63, 1) 0%, rgba(252, 143, 70, 1) 100%);
+    border-radius: 10px;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
+    width: 250px;
+    min-width: 250px;
+    height: 360px;
+    transition-duration: 0.8s;
+    cursor: pointer;
+    will-change: transform;
+
+    .card-header {
+        font-family: "Sigmar One";
+        will-change: transform;
+        transition-duration: 0.8s;
+
+        border: 3px solid #f8a918;
+        border-top-right-radius: 10px;
+        border-top-left-radius: 10px;
+        background-color: #efcf95;
+        padding: 2rem;
+        height: 100px;
+    }
+
+    &:hover {
+        background-color: rgb(235, 233, 233);
+        transform: rotate(5deg) scale(1.05);
+        box-shadow: 5px 5px 30px rgb(246 196 3);
+        transition-duration: 0.8s;
+        .card-header {
+            transition-duration: 0.8s;
+
+            mix-blend-mode: screen;
+        }
+    }
+
+    .refNumber {
+        font-family: "Sigmar One";
+        color: #5f2a13;
+    }
 }
