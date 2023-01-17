@@ -1,9 +1,7 @@
 <template>
   <div class="min-h-screen relative">
     <NavBar />
-    <div class="py-8">
-      <h1 class="text-center text-2xl">Votre equipe</h1>
-    </div>
+    <h1 class="py-8 text-center text-2xl">Votre equipe</h1>
     <div class="flex justify-center items-center flex-col">
       <p class="py-8 text-center mx-auto">
         Cliquez sur la carte et puis sur ENTRAINER pour donner de l'experience à votre pokemon
@@ -18,13 +16,12 @@
         Entrainer
       </button>
     </div>
-    <div class="flex justify-center pt-16 gap-10 flex-wrap p-8 max-w-[1200px] m-auto">
-      <div class=""></div>
+    <div class="flex justify-center pt-16 flex-wrap p-8 max-w-[1200px] m-auto gap-10">
       <div
         v-if="pokemons.length === 0"
         v-for="pokemon in 6"
         :key="pokemon"
-        class="flex justify-center gap-10 p-8"
+        class="flex justify-center p-8"
       >
         <div
           @click="router.push('/')"
@@ -40,7 +37,9 @@
         :key="pokemon.id"
         :class="selectedPokemon === pokemon ? 'active' : ''"
         class="card"
-        @click="selectedPokemon = pokemon"
+        @click="
+          selectedPokemon === pokemon ? (selectedPokemon = null) : (selectedPokemon = pokemon)
+        "
       >
         <div
           class="card-header flex justify-center items-center text-center pt-4 text-lg text-[#4b0a0a]"
