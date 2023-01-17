@@ -96,8 +96,7 @@ const handleSubmit = async () => {
         emit("submitEvent");
       }
     })
-    .catch((error) => {
-      console.log(error);
+    .catch(() => {
       isFormNonValid.value = true;
     });
 };

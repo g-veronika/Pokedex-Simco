@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen relative">
-    <Navbar />
+    <NavBar />
     <div class="py-8">
       <h1 class="text-center text-2xl">Votre equipe</h1>
     </div>
@@ -19,7 +19,13 @@
       </button>
     </div>
     <div class="flex justify-center pt-16 gap-10 flex-wrap p-8 max-w-[1200px] m-auto">
-      <div v-if="pokemons.length === 0" v-for="pokemon in 6" class="flex justify-center gap-10 p-8">
+      <div class=""></div>
+      <div
+        v-if="pokemons.length === 0"
+        v-for="pokemon in 6"
+        :key="pokemon"
+        class="flex justify-center gap-10 p-8"
+      >
         <div
           @click="router.push('/')"
           class="empty-card flex justify-center items-center cursor-pointer w-[250px] min-w-[250px] h-[360px]"
@@ -31,6 +37,7 @@
       <div
         v-else
         v-for="pokemon in pokemons"
+        :key="pokemon.id"
         :class="selectedPokemon === pokemon ? 'active' : ''"
         class="card"
         @click="selectedPokemon = pokemon"
@@ -52,7 +59,7 @@
 </template>
 
 <script setup lang="ts">
-import Navbar from "@/components/Navbar.vue";
+import NavBar from "@/components/NavBar.vue";
 import { accessToken, auth } from "@/getId";
 import router from "@/router";
 import { useUserStore } from "@/stores/user";
@@ -97,7 +104,7 @@ const deleteCard = async (cardId: number) => {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
         })
-        .then((response: { data: any }) => {
+        .then(() => {
           //Router.go(0) ne marche pas sur Netlify
           window.location.reload();
         });

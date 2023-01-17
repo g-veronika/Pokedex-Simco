@@ -24,11 +24,8 @@ export const auth = async (): Promise<void> => {
       //If erreur d'authentification on lance refreshToken() et on relance requete /api/users/me
       .catch(async (error) => {
         if (error.response.status === 401) {
-          console.log("before refresh token");
           //On remet a jour accessToken
           await refreshToken().then(async () => {
-            console.log("before /users/me");
-
             if (accessToken()) {
               await axios
                 .get(URL, {
@@ -38,8 +35,6 @@ export const auth = async (): Promise<void> => {
                   },
                 })
                 .then((response: { data: any }) => {
-                  console.log("before patch pinia");
-
                   user.$patch({
                     userName: response.data.username,
                     id: response.data.id,

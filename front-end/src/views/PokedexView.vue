@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen relative">
-    <Navbar />
+    <NavBar />
     <div class="flex justify-center pt-16 gap-10 flex-wrap p-8 min-h-screen">
       <div @click="openModal(pokemon)" v-for="pokemon in pokemons" class="card">
         <div
@@ -42,7 +42,7 @@
 </template>
 
 <script setup lang="ts">
-import Navbar from "@/components/Navbar.vue";
+import NavBar from "@/components/NavBar.vue";
 import PokemonModal from "@/components/PokemonModal.vue";
 import { auth } from "@/getId";
 import type { Pokemon } from "@/types/pokemons";

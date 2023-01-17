@@ -69,7 +69,6 @@ const handleSubmit = async () => {
       }
     })
     .catch((error: any) => {
-      console.log(error);
       isInvalid.value = true;
     });
 };
