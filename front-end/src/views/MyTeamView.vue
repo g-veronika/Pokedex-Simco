@@ -105,7 +105,8 @@ const deleteCard = async (cardId: number) => {
         })
         .then(() => {
           //Router.go(0) ne marche pas sur Netlify
-          window.location.reload();
+          // window.location.reload();
+          pokemons.value = pokemons.value.filter((v) => v.id !== cardId);
         });
     })
     .catch(() => {
