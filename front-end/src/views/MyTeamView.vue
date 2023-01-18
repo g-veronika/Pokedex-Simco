@@ -104,8 +104,6 @@ const deleteCard = async (cardId: number) => {
           headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
         })
         .then(() => {
-          //Router.go(0) ne marche pas sur Netlify
-          // window.location.reload();
           pokemons.value = pokemons.value.filter((v) => v.id !== cardId);
         });
     })
@@ -128,7 +126,7 @@ const giveXp = async () => {
           }
         )
         .then((response: { data: any }) => {
-          window.location.reload();
+          selectedPokemon.value.experience = response.data.experience;
         });
     })
     .catch((error) => {
